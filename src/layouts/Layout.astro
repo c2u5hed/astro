@@ -1,0 +1,35 @@
+---
+const { frontmatter } = Astro.props
+const { pathname } = new URL(Astro.request.url)
+const docs = (await Astro.glob('../pages/instructions/*.md')).sort((a,b) => a.frontmatter.order - b.frontmatter.order)
+---
+
+<!DOCTYPE html>
+<html lang="en" class="h-full dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{frontmatter.title}</title>
+  </head>
+  <body class="flex justify-center bg-white dark:bg-gray-800 min-h-full">
+    <aside class="sticky top-0 w-64 h-screen" aria-label="Sidenav">
+      <div class="overflow-y-auto pt-10 pb-5 px-3 h-full bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+        <ul class="space-y-2">
+          {docs.map((doc) => (
+            <li>
+              <a href={doc.url} class={`${doc.url === pathname ? "bg-gray-100 dark:bg-gray-700" : ""} flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group`}>
+                <span class="ml-3">{doc.frontmatter.title}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </aside>
+    <main class="w-full max-w-2xl px-12 py-10 format format-sm sm:format-base format-blue dark:format-invert">
+      <slot />
+    </main>
+    <script src="https://unpkg.com/flowbite@1.5.3/dist/flowbite.js"></script>
+  </body>
+</html>
