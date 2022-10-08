@@ -1,6 +1,7 @@
 ---
 const { frontmatter } = Astro.props
-const { pathname } = new URL(Astro.request.url)
+const url = new URL(Astro.request.url)
+const { pathname, hostname } = url
 const docs = (await Astro.glob('../pages/instructions/*.md')).sort((a,b) => a.frontmatter.order - b.frontmatter.order)
 ---
 
@@ -12,6 +13,13 @@ const docs = (await Astro.glob('../pages/instructions/*.md')).sort((a,b) => a.fr
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{frontmatter.title}</title>
+    <script define:vars={{ hostname }}>
+      const css = `img:not([src*="${hostname}"]) { display: none; }`
+      const head = document.querySelector('head')
+      const style = document.createElement('style')
+      head.appendChild(style)
+      style.styleSheet ? style.styleSheet.cssText = css : style.appendChild(document.createTextNode(css))
+    </script>
   </head>
   <body class="flex justify-center bg-white dark:bg-gray-800 min-h-full">
     <aside class="sticky top-0 w-64 h-screen" aria-label="Sidenav">
